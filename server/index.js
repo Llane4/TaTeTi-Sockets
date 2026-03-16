@@ -2,6 +2,7 @@ import express from 'express';
 import {createServer} from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
+import { handleConnection } from './socketHandler.js';
 
 const app = express();
 const httpServer = createServer(app);
