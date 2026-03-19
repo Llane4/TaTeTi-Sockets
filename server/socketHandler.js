@@ -1,4 +1,4 @@
-import { rooms } from './gameInfo.js';
+import { rooms, verificarGanador } from './gameInfo.js';
 
 export const handleConnection = (socket, io) => {
     console.log('Usuario conectado:', socket.id);
