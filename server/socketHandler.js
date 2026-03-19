@@ -45,6 +45,14 @@ export const handleConnection = (socket, io) => {
         room.board[position] = player.symbol;
         room.currentTurn = player.symbol === 'X' ? 'O' : 'X';
 
+        const ganador = verificarGanador(room.board);
+        if(ganador) {
+            io.to(gameId).emit('game_over', {
+                winner: ganador,
+                message: `El jugador ${ganador} ha ganado la partida`
+            });
+        }
+
         io.to(gameId).emit('update_board', 
             {
                 board: room.board, 
@@ -54,6 +62,8 @@ export const handleConnection = (socket, io) => {
         //Falta agregar la logica para verificar si hay un ganador o si es un empate
     })
 
+
+    
     //Cuando un usuario se desconecta
     socket.on('disconnect', () => {
         console.log('Usuario desconectado:', socket.id);
