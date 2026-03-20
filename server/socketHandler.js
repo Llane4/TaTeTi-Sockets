@@ -1,7 +1,8 @@
-import { rooms, verificarGanador } from './gameInfo.js';
+import { rooms, verificarGanador, getInfoRooms } from './gameInfo.js';
 
 export const handleConnection = (socket, io) => {
     console.log('Usuario conectado:', socket.id);
+    socket.emit('rooms_update', getInfoRooms());
 
     //Cuando un usuario se une a una sala
     socket.on('join_game', (gameId) => {
@@ -28,6 +29,7 @@ export const handleConnection = (socket, io) => {
         }
 
         console.log(`Usuario ${socket.id} se unio a la saal ${gameId}`);
+        io.emit('rooms_update', getInfoRooms());
     });
     
     //Cuando un usuario hace un movimiento
@@ -67,5 +69,20 @@ export const handleConnection = (socket, io) => {
     //Cuando un usuario se desconecta
     socket.on('disconnect', () => {
         console.log('Usuario desconectado:', socket.id);
+
+        for (const gameId of Object.keys(rooms)) {
+            const room = rooms[gameId];
+            const nextPlayers = room.players.filter((player) => player.id !== socket.id);
+
+            if (nextPlayers.length !== room.players.length) {
+                room.players = nextPlayers;
+
+                if (room.players.length === 0) {
+                    delete rooms[gameId];
+                }
+            }
+        }
+
+        io.emit('rooms_update', getInfoRooms());
     });
 }

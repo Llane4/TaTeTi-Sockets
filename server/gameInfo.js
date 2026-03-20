@@ -20,3 +20,11 @@ export const verificarGanador = (board) => {
     }
     return null;
 }
+
+export const getInfoRooms = ()=>{
+    return Object.keys(rooms).map(id => ({
+        id,
+        playerCount: rooms[id].players.length,
+        status: rooms[id].players.length === 2 ? "Llena" : "Esperando"
+    }))
+}
